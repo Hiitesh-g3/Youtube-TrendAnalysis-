@@ -1,3 +1,4 @@
+from utils import wrangle
 import streamlit as st
 import pickle
 import pandas as pd
@@ -5,25 +6,28 @@ import random
 import plotly.express as px
 import os
 from email_alert import send_email_alert
+from pathlib import Path
+import sys
 
 # 🚀 Always first command
 st.set_page_config(page_title="YouTube Trend Analyzer", layout="wide")
 
-# --- Load models ---
-import pickle
+# --- Dynamic Path Setup ---
+CURRENT_DIR = Path(__file__).parent.resolve()
 
 # --- Load models ---
-# rec_model = pickle.load(open('./recommendation_model.pkl', 'rb'))
-# forecast_model = pickle.load(open('./trend_forecast_model.pkl', 'rb'))
+rec_model_path = CURRENT_DIR.parent / 'models' / 'recommendation_model.pkl'
+forecast_model_path = CURRENT_DIR.parent / 'models' / 'trend_forecast_model.pkl'
 
-with open('../app/recommendatin_model.pkl', 'rb') as f:
+with open(rec_model_path, 'rb') as f:
     rec_model = pickle.load(f)
-with open('../app/trend_forecast_model.pkl', 'rb') as f:
+
+with open(forecast_model_path, 'rb') as f:
     forecast_model = pickle.load(f)
 
-
 # --- Load Processed Data ---
-df = pd.read_csv('../data/processed_data.csv')
+data_path = CURRENT_DIR.parent / 'data' / 'processed_data.csv'
+df = pd.read_csv(data_path)
 
 # --- Category Mapping ---
 category_mapping = {
@@ -71,10 +75,8 @@ if st.button('Predict Trend'):
 
     input_df = pd.DataFrame([input_features])
 
-    # NO DROP NOW!
     # Predict trending probability
     trending_probability = rec_model.predict_proba(input_df)[0][1] * 100
-
 
     st.success(f"""
     ✅ **Trending Probability:** {trending_probability:.1f}%  
@@ -87,27 +89,21 @@ if st.button('Predict Trend'):
 
     success_score = 0
 
-    # Title Length Score
     if 30 <= len(title) <= 70:
         success_score += 20
 
-    # Tags Count Score
     if len(tags.split(',')) > 5:
         success_score += 20
 
-    # Video Length Score
     if 5 <= video_length <= 15:
         success_score += 20
 
-    # Upload Hour Score
     if 18 <= upload_hour <= 22:
         success_score += 20
 
-    # Trending Probability Score
     if trending_probability >= 60:
         success_score += 20
 
-    # Show Final Score
     st.subheader(f"🎯 **{success_score} / 100**")
 
     if success_score >= 80:
@@ -138,9 +134,7 @@ if st.button('Predict Trend'):
     # --- Similar Trending Videos Section ---
     st.header("🎬 Similar Trending Videos You Might Like")
 
-    # Normalize category input
     user_category = category.strip().lower()
-
     matching_videos = df[df['category'].str.lower() == user_category]
 
     if len(matching_videos) >= 3:
@@ -197,20 +191,16 @@ fig2 = px.line(
 )
 st.plotly_chart(fig2, use_container_width=True)
 
-# --- Views vs Likes Interactive Scatter Plot ---
 st.subheader("📊 Views vs Likes Scatter Plot (Interactive)")
-
 fig_scatter = px.scatter(
     df,
     x='views',
     y='likes',
     color='category',
-    hover_data=['title', 'views', 'likes', 'category'],  # 🚀 Hover shows details
+    hover_data=['title', 'views', 'likes', 'category'],
     title='Views vs Likes by Category',
     labels={'views': 'Views', 'likes': 'Likes', 'category': 'Category'},
     template='plotly_white',
     size_max=12
 )
-
 st.plotly_chart(fig_scatter, use_container_width=True)
-
