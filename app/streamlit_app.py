@@ -11,7 +11,11 @@ st.set_page_config(page_title="YouTube Trend Analyzer", layout="wide")
 
 # --- Load models ---
 rec_model = pickle.load(open('models/recommendation_model.pkl', 'rb'))
-forecast_model = pickle.load(open('models/trend_forecast_model.pkl', 'rb'))
+import json  # add this at top with other imports
+
+with open('models/trend_forecast_model.json', 'r') as f:
+    forecast_model = json.load(f)
+
 
 # --- Load Processed Data ---
 df = pd.read_csv('../data/processed_data.csv')
