@@ -19,7 +19,7 @@ import pickle
 with open('./recommendation_model.pkl', 'rb') as f:
     rec_model = pickle.load(f)
 with open('./trend_forecast_model.pkl', 'rb') as f:
-    rec_model = pickle.load(f)
+    forecast_model = pickle.load(f)
 
 
 # --- Load Processed Data ---
