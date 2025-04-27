@@ -7,3 +7,4 @@ utils
 
 path
 statsmodels
+prophet
