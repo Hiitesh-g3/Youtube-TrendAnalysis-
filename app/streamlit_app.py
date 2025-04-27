@@ -13,8 +13,8 @@ st.set_page_config(page_title="YouTube Trend Analyzer", layout="wide")
 import pickle
 
 # --- Load models ---
-rec_model = pickle.load(open('recommendation_model.pkl', 'rb'))
-forecast_model = pickle.load(open('trend_forecast_model.pkl', 'rb'))
+rec_model = pickle.load(open('./recommendation_model.pkl', 'rb'))
+forecast_model = pickle.load(open('./trend_forecast_model.pkl', 'rb'))
 
 
 
