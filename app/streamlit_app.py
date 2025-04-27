@@ -16,9 +16,9 @@ import pickle
 # rec_model = pickle.load(open('./recommendation_model.pkl', 'rb'))
 # forecast_model = pickle.load(open('./trend_forecast_model.pkl', 'rb'))
 
-with open('./recommendation_model.pkl', 'rb') as f:
+with open('../app/recommendatin_model.pkl', 'rb') as f:
     rec_model = pickle.load(f)
-with open('./trend_forecast_model.pkl', 'rb') as f:
+with open('../app/trend_forecast_model.pkl', 'rb') as f:
     forecast_model = pickle.load(f)
 
 
